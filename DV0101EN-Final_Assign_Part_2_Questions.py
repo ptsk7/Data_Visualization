@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[ ]:
-
-
 import dash
 from dash import dcc
 from dash import html
@@ -13,7 +7,7 @@ import plotly.graph_objs as go
 import plotly.express as px
 
 # Load the data using pandas
-data = pd.read_csv('https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBMDeveloperSkillsNetwork-DV0101EN-SkillsNetwork/Data%20Files/historical_automobile_sales.csv')
+data = pd.read_csv("https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBMDeveloperSkillsNetwork-DV0101EN-SkillsNetwork/Data%20Files/historical_automobile_sales.csv")
 
 # Initialize the Dash app
 app = dash.Dash(__name__)
@@ -41,7 +35,7 @@ app.layout = html.Div([
             options=dropdown_options,
             value='Yearly Statistics',
             placeholder='Select Statistics',
-            style={'width':80,'padding':3,'textAlign': 'center','font-size': 20}
+            style={'width':300,'padding':5,'textAlign': 'center','font-size': 20}
         )
     ]),
     html.Div(dcc.Dropdown(
@@ -68,8 +62,8 @@ def update_input_container(selected_statistics):
 # Define the callback function to update the input container based on the selected statistics
 @app.callback(
     Output(component_id='output-container', component_property='children'),
-    [Input(component_id='dropdown-statistics', component_property='value'), 
-    Input(component_id='select-year', component_property='value')])
+    [Input(component_id='select-year', component_property='value'), 
+    Input(component_id='dropdown-statistics', component_property='value')])
 
 
 def update_output_container(input_year,selected_statistics):
@@ -113,7 +107,7 @@ def update_output_container(input_year,selected_statistics):
 
 # TASK 2.6: Create and display graphs for Yearly Report Statistics
  # Yearly Statistic Report Plots                             
-    elif (input_year and selected_statistics=='Yearly_Statistics') :
+    elif (input_year and selected_statistics=='Yearly Statistics') :
         yearly_data = data[data['Year'] == input_year]
                               
 #TASK 2.5: Creating Graphs Yearly data
@@ -124,7 +118,7 @@ def update_output_container(input_year,selected_statistics):
             
 # Plot 2 Total Monthly Automobile sales using line chart.
         tmas= data.groupby('Month')['Automobile_Sales'].mean().reset_index()
-        Y_chart2 = dcc.Graph(figure=px.line(tmas,x='Month',y='Automobile_Sales'))
+        Y_chart2 = dcc.Graph(figure=px.line(yas,x='Month',y='Automobile_Sales'))
 
             # Plot bar chart for average number of vehicles sold during the given year
         avr_vdata=yearly_data.groupby('Year')['Automobile_Sales'].mean().reset_index()
@@ -136,8 +130,8 @@ def update_output_container(input_year,selected_statistics):
 
 #TASK 2.6: Returning the graphs for displaying Yearly data
         return [
-                html.Div(className='chart-item', children=[html.Div(R_chart1),html.Div(R_chart2)],style={'display':'flex'}),
-                html.Div(className='chart-item', children=[html.Div(R_chart3),html.Div(R_chart4)],style={'display':'flex'})
+                html.Div(className='chart-item', children=[html.Div(Y_chart1),html.Div(Y_chart2)],style={'display':'flex'}),
+                html.Div(className='chart-item', children=[html.Div(Y_chart3),html.Div(Y_chart4)],style={'display':'flex'})
                 ]
         
     else:
