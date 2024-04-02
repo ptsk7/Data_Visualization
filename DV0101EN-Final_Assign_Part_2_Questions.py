@@ -5,6 +5,8 @@ from dash.dependencies import Input, Output
 import pandas as pd
 import plotly.graph_objs as go
 import plotly.express as px
+from plotly.subplots import make_subplots
+
 
 # Load the data using pandas
 data = pd.read_csv("https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBMDeveloperSkillsNetwork-DV0101EN-SkillsNetwork/Data%20Files/historical_automobile_sales.csv")
@@ -98,12 +100,10 @@ def update_output_container(input_year,selected_statistics):
 # Plot 4 bar chart for the effect of unemployment rate on vehicle type and sale
         dfr4= recession_data.groupby(['unemployment_rate','Vehicle_Type'])['Automobile_Sales'].mean().reset_index()
         R_chart4 = dcc.Graph(figure=px.bar(dfr4, x='unemployment_rate', y='Automobile_Sales', color='Vehicle_Type', title='Effect of Umemployment on Vehicle types and Sale'))
-
-
-        return [
+        return [html.Div([
                 html.Div(className='chart-item', children=[html.Div(children=R_chart1),html.Div(children=R_chart2)],style={'display': 'flex'}),
                 html.Div(className='chart-item', children=[html.Div(children=R_chart3),html.Div(children=R_chart4)],style={'display': 'flex'})
-                  ]
+                  ])]
 
 # TASK 2.6: Create and display graphs for Yearly Report Statistics
  # Yearly Statistic Report Plots                             
@@ -114,30 +114,31 @@ def update_output_container(input_year,selected_statistics):
                               
 #plot 1 Yearly Automobile sales using line chart for the whole period.
         yas= data.groupby('Year')['Automobile_Sales'].mean().reset_index()
-        Y_chart1 = dcc.Graph(figure=px.line(yas, x='Year', y='Automobile_Sales'))
+        Y_chart1 = dcc.Graph(figure=px.line(yas, x='Year', y='Automobile_Sales',title='Yearly Automobile sales for the whole period'))
             
 # Plot 2 Total Monthly Automobile sales using line chart.
         tmas= data.groupby('Month')['Automobile_Sales'].mean().reset_index()
-        Y_chart2 = dcc.Graph(figure=px.line(yas,x='Month',y='Automobile_Sales'))
+        Y_chart2 = dcc.Graph(figure=px.line(tmas,x='Month',y='Automobile_Sales',title='Total Monthly Automobile sales in the Given year'))
 
             # Plot bar chart for average number of vehicles sold during the given year
-        avr_vdata=yearly_data.groupby('Year')['Automobile_Sales'].mean().reset_index()
-        Y_chart3 = dcc.Graph( figure=px.bar(avr_vdata, x='Year',y='Automobile_Sales',title='Average Vehicles Sold by Vehicle Type in the Given year {}'.format(input_year)))
+        avg_vdata=yearly_data.groupby('Year')['Automobile_Sales'].mean().reset_index()
+        Y_chart3 = dcc.Graph( figure=px.bar(avg_vdata, x='Year',y='Automobile_Sales',title='Average Vehicles Sold by Vehicle Type in the Given year {}'.format(input_year)))
 
             # Total Advertisement Expenditure for each vehicle using pie chart
-        exp_data=yearly_data.groupby('Vehicle_Type')['Advertising_Expenditure'].sum().reset_index()
-        Y_chart4 = dcc.Graph(figure=px.pie(exp_data,values='Advertising_Expenditure',names='Vehicle_Type',title='Total Expenditure Share by Vehicle Type'))
+        exp_data=data.groupby('Vehicle_Type')['Advertising_Expenditure'].sum().reset_index()
+        Y_chart4 = dcc.Graph(figure=px.pie(exp_data,values='Advertising_Expenditure',names='Vehicle_Type',title='Total Expenditure Share by Vehicle Type in the Given year'))
 
 #TASK 2.6: Returning the graphs for displaying Yearly data
-        return [
-                html.Div(className='chart-item', children=[html.Div(Y_chart1),html.Div(Y_chart2)],style={'display':'flex'}),
-                html.Div(className='chart-item', children=[html.Div(Y_chart3),html.Div(Y_chart4)],style={'display':'flex'})
-                ]
-        
+        return [html.Div([
+                html.Div(className='chart-item', children=[html.Div(children=Y_chart1),html.Div(children=Y_chart2)],style={'display': 'flex'}),
+                html.Div(className='chart-item', children=[html.Div(children=Y_chart3),html.Div(children=Y_chart4)],style={'display': 'flex'})
+                  ])]
+    
     else:
         return None
 
 # Run the Dash app
+
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=True,port=8051)
 
